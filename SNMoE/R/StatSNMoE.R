@@ -6,7 +6,11 @@ StatSNMoE <- setRefClass(
     piik = "matrix",
     z_ik = "matrix",
     klas = "matrix",
-    Ex = "matrix",
+    # Ex = "matrix",
+    Ey_k = "matrix",
+    Ey = "matrix",
+    Var_yk = "matrix",
+    Vary = "matrix",
     log_lik = "numeric",
     com_loglik = "numeric",
     stored_loglik = "list",
@@ -44,8 +48,7 @@ StatSNMoE <- setRefClass(
       K <- ncol(piik)
       ikmax <- max.col(piik)
       ikmax <- matrix(ikmax, ncol = 1)
-      z_ik <<-
-        ikmax %*% ones(1, K) == ones(N, 1) %*% (1:K) # partition_MAP
+      z_ik <<- ikmax %*% ones(1, K) == ones(N, 1) %*% (1:K) # partition_MAP
       klas <<- ones(N, 1)
       for (k in 1:K) {
         klas[z_ik[, k] == 1] <<- k
@@ -64,50 +67,60 @@ StatSNMoE <- setRefClass(
     #######
     # compute the final solution stats
     #######
-    computeStats = function(modelRHLP, paramRHLP, phi, cpu_time_all) {
-      polynomials <<- phi$XBeta %*% paramRHLP$beta
-      weighted_polynomials <<- piik * polynomials
-      Ex <<- matrix(rowSums(weighted_polynomials))
-
+    computeStats = function(modelSNMoE, paramSNMoE, phiBeta, phiAlpha, cpu_time_all) {
       cpu_time <<- mean(cpu_time_all)
-      # Psi <- c(as.vector(paramRHLP$Wk), as.vector(paramRHLP$betak), as.vector(paramRHLP$sigmak))
-      BIC <<- log_lik - (modelRHLP$nu * log(modelRHLP$m) / 2)
-      AIC <<- log_lik - modelRHLP$nu
+
+      # E[yi|zi=k]
+      Ey_k <<- phiBeta$XBeta[1:modelSNMoE$n, ] %*% paramSNMoE$beta + ones(modelSNMoE$n, 1) %*% (sqrt(2 / pi) * paramSNMoE$delta * paramSNMoE$sigma)
+
+      # E[yi]
+      Ey <<- matrix(apply(piik * Ey_k, 1, sum))
+
+      # Var[yi|zi=k]
+      Var_yk <<- (1 - (2 / pi) * (paramSNMoE$delta ^ 2)) * (paramSNMoE$sigma ^ 2)
 
 
-      zik_log_alphag_fg_xij <- (z_ik) * (log_piik_fik)
-
-      com_loglik <<- sum(rowSums(zik_log_alphag_fg_xij))
-
-
-      ICL <<- com_loglik - modelRHLP$nu * log(modelRHLP$m) / 2
+      # Var[yi]
+      Vary <<- apply(piik * (Ey_k ^ 2 + ones(modelSNMoE$n, 1) %*% Var_yk), 1, sum) - Ey ^2
 
 
+      ### BIC AIC et ICL
+
+      BIC <<- log_lik - (modelSNMoE$nu * log(modelSNMoE$n * modelSNMoE$m) / 2)
+      AIC <<- log_lik - modelSNMoE$nu
+      ## CL(theta) : complete-data loglikelihood
+      zik_log_piik_fk <- (repmat(z_ik, modelSNMoE$m, 1)) * log_piik_fik
+      sum_zik_log_fik <- apply(zik_log_piik_fk, 1, sum)
+      comp_loglik <- sum(sum_zik_log_fik)
+
+      ICL <<- comp_loglik - (modelSNMoE$nu * log(modelSNMoE$n * modelSNMoE$m) / 2)
+      # solution.XBeta = XBeta(1:m,:);
+      # solution.XAlpha = XAlpha(1:m,:);
     },
     #######
     # EStep
     #######
     EStep = function(modelSNMoE, paramSNMoE, phiBeta, phiAlpha) {
-      piik <<- modele_logit(paramSNMoE$alpha, phiBeta$XBeta)$probas
+      piik <<- modele_logit(paramSNMoE$alpha, phiAlpha$XBeta)$probas
 
       piik_fik <- zeros(modelSNMoE$m * modelSNMoE$n, modelSNMoE$K)
 
-      for (k in (1 : modelSNMoE$K)) {
-        muk <- phiAlpha$XBeta %*% paramSNMoE$beta[, k]
+      for (k in (1:modelSNMoE$K)) {
+        muk <- phiBeta$XBeta %*% paramSNMoE$beta[, k]
 
         sigma2k <- paramSNMoE$sigma[k]
         sigmak <- sqrt(sigma2k)
-        dik <- (modelSNMoE$Y - muk)/sigmak;
+        dik <- (modelSNMoE$Y - muk) / sigmak
 
         mu_uk <- (paramSNMoE$delta[k] * abs(modelSNMoE$Y - muk))
-        sigma2_uk <- (1 - paramSNMoE$delta[k]^2) * paramSNMoE$sigma[k]
+        sigma2_uk <- (1 - paramSNMoE$delta[k] ^ 2) * paramSNMoE$sigma[k]
         sigma_uk <- sqrt(sigma2_uk)
 
-        E1ik[,k] <<- mu_uk + sigma_uk * dnorm(paramSNMoE$lambda[k] * dik, 0, 1) / pnorm(paramSNMoE$lambda[k] * dik, 0, 1)
-        E2ik[,k] <<- mu_uk^2 + sigma_uk^2 + sigma_uk * mu_uk * dnorm(paramSNMoE$lambda[k] * dik, 0, 1) / pnorm(paramSNMoE$lambda[k] * dik, 0, 1)
+        E1ik[, k] <<- mu_uk + sigma_uk * dnorm(paramSNMoE$lambda[k] * dik, 0, 1) / pnorm(paramSNMoE$lambda[k] * dik, 0, 1)
+        E2ik[, k] <<- mu_uk ^ 2 + sigma_uk ^ 2 + sigma_uk * mu_uk * dnorm(paramSNMoE$lambda[k] * dik, 0, 1) / pnorm(paramSNMoE$lambda[k] * dik, 0, 1)
 
         # weighted skew normal linear expert likelihood
-        piik_fik[,k] <- piik[,k]*(2/sigmak)*dnorm(dik, 0, 1)*pnorm(paramSNMoE$lambda[k]*dik)
+        piik_fik[, k] <- piik[, k] * (2 / sigmak) * dnorm(dik, 0, 1) * pnorm(paramSNMoE$lambda[k] * dik)
       }
 
       log_piik_fik <<- log(piik_fik)
@@ -124,7 +137,11 @@ StatSNMoE <- function(modelSNMoE) {
   piik <- matrix(NA, modelSNMoE$n, modelSNMoE$K)
   z_ik <- matrix(NA, modelSNMoE$n, modelSNMoE$K)
   klas <- matrix(NA, modelSNMoE$n, 1)
-  Ex <- matrix(NA, modelSNMoE$n, 1)
+  # Ex <- matrix(NA, modelSNMoE$n, 1)
+  Ey_k <- matrix(NA, modelSNMoE$n, modelSNMoE$K)
+  Ey <- matrix(NA, modelSNMoE$n, 1)
+  Var_yk <- matrix(NA, 1, modelSNMoE$K)
+  Vary <- matrix(NA, modelSNMoE$n, 1)
   log_lik <- -Inf
   com_loglik <- -Inf
   stored_loglik <- list()
@@ -146,7 +163,10 @@ StatSNMoE <- function(modelSNMoE) {
     piik = piik,
     z_ik = z_ik,
     klas = klas,
-    Ex = Ex,
+    Ey_k = Ey_k,
+    Ey = Ey,
+    Var_yk = Var_yk,
+    Vary = Vary,
     log_lik = log_lik,
     com_loglik = com_loglik,
     stored_loglik = stored_loglik,

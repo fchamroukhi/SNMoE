@@ -3,8 +3,7 @@ source("R/ParamSNMoE.R")
 source("R/StatSNMoE.R")
 source("R/FittedSNMoE.R")
 
-EM <-
-  function(modelSNMoE, n_tries = 1, max_iter = 1500, threshold = 1e-6, verbose = FALSE, verbose_IRLS = FALSE) {
+EM <- function(modelSNMoE, n_tries = 1, max_iter = 1500, threshold = 1e-6, verbose = FALSE, verbose_IRLS = FALSE) {
     phiAlpha <- designmatrix(x = modelSNMoE$X, p = modelSNMoE$p)
     phiBeta <- designmatrix(x = modelSNMoE$X, p = modelSNMoE$q)
 
@@ -33,14 +32,29 @@ EM <-
       while (!converge && (iter <= max_iter)) {
         stat$EStep(modelSNMoE, param, phiBeta, phiAlpha)
 
-        param$MStep(modelSNMoE, stat, phiAlpha, phiBeta, verbose_IRLS)
 
-        stat$computeLikelihood(reg_irls)
+
+
+
+
+
+        reg_irls <- param$MStep(modelSNMoE, stat, phiAlpha, phiBeta, verbose_IRLS)
+
+
+
+
+
+        stat$log_lik <- sum(stat$log_sum_piik_fik) + reg_irls
+
+
+
+
+        # stat$computeLikelihood(reg_irls)
         # FIN EM
 
         iter <- iter + 1
         if (verbose) {
-          message("EM     : Iteration : ", iter, "  log-likelihood : "  , stat$log_lik)
+          message("EM : Iteration : ", iter," log-likelihood : "  , stat$log_lik)
         }
         if (prev_loglik - stat$log_lik > 1e-5) {
           message("!!!!! EM log-likelihood is decreasing from ", prev_loglik, "to ", stat$log_lik)
@@ -59,6 +73,14 @@ EM <-
         stat$stored_loglik[iter] <- stat$log_lik
       }# FIN EM LOOP
 
+
+
+
+
+
+
+
+
       cpu_time_all[try_EM] <- Sys.time() - time
 
       # at this point we have computed param and stat that contains all the information
@@ -66,15 +88,6 @@ EM <-
       if (stat$log_lik > best_loglik) {
         statSolution <- stat$copy()
         paramSolution <- param$copy()
-        if (modelRHLP$K == 1) {
-          statSolution$tik <- matrix(stat$tik, nrow = modelRHLP$m, ncol = 1)
-          statSolution$piik <-
-            matrix(stat$piik, nrow = modelRHLP$m, ncol = 1)
-        }
-        else{
-          statSolution$tik <- stat$tik[1:modelRHLP$m, ]
-          statSolution$piik <- stat$piik[1:modelRHLP$m, ]
-        }
 
         best_loglik <- stat$log_lik
       }
@@ -92,7 +105,8 @@ EM <-
 
 
     # FINISH computation of statSolution
-    statSolution$computeStats(modelRHLP, paramSolution, phi, cpu_time_all)
+    statSolution$computeStats(modelSNMoE, paramSolution, phiBeta, phiAlpha, cpu_time_all)
 
-    return(FittedRHLP(modelRHLP, paramSolution, statSolution))
+    return(FittedSNMoE(modelSNMoE, paramSolution, statSolution))
+
   }

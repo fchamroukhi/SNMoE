@@ -22,6 +22,7 @@ threshold <- 1e-6
 verbose <- TRUE
 verbose_IRLS <- FALSE
 
+
 ####
 # EM Algorithm
 ####
