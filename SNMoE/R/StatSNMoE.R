@@ -14,7 +14,6 @@ StatSNMoE <- setRefClass(
     log_lik = "numeric",
     com_loglik = "numeric",
     stored_loglik = "list",
-    stored_com_loglik = "list",
     BIC = "numeric",
     ICL = "numeric",
     AIC = "numeric",
@@ -23,9 +22,7 @@ StatSNMoE <- setRefClass(
     log_sum_piik_fik = "matrix",
     tik = "matrix",
     E1ik = "matrix",
-    E2ik = "matrix",
-    polynomials = "matrix",
-    weighted_polynomials = "matrix"
+    E2ik = "matrix"
   ),
   methods = list(
     MAP = function() {
@@ -79,7 +76,6 @@ StatSNMoE <- setRefClass(
       # Var[yi|zi=k]
       Var_yk <<- (1 - (2 / pi) * (paramSNMoE$delta ^ 2)) * (paramSNMoE$sigma ^ 2)
 
-
       # Var[yi]
       Vary <<- apply(piik * (Ey_k ^ 2 + ones(modelSNMoE$n, 1) %*% Var_yk), 1, sum) - Ey ^2
 
@@ -91,9 +87,9 @@ StatSNMoE <- setRefClass(
       ## CL(theta) : complete-data loglikelihood
       zik_log_piik_fk <- (repmat(z_ik, modelSNMoE$m, 1)) * log_piik_fik
       sum_zik_log_fik <- apply(zik_log_piik_fk, 1, sum)
-      comp_loglik <- sum(sum_zik_log_fik)
+      com_loglik <<- sum(sum_zik_log_fik)
 
-      ICL <<- comp_loglik - (modelSNMoE$nu * log(modelSNMoE$n * modelSNMoE$m) / 2)
+      ICL <<- com_loglik - (modelSNMoE$nu * log(modelSNMoE$n * modelSNMoE$m) / 2)
       # solution.XBeta = XBeta(1:m,:);
       # solution.XAlpha = XAlpha(1:m,:);
     },
@@ -137,7 +133,6 @@ StatSNMoE <- function(modelSNMoE) {
   piik <- matrix(NA, modelSNMoE$n, modelSNMoE$K)
   z_ik <- matrix(NA, modelSNMoE$n, modelSNMoE$K)
   klas <- matrix(NA, modelSNMoE$n, 1)
-  # Ex <- matrix(NA, modelSNMoE$n, 1)
   Ey_k <- matrix(NA, modelSNMoE$n, modelSNMoE$K)
   Ey <- matrix(NA, modelSNMoE$n, 1)
   Var_yk <- matrix(NA, 1, modelSNMoE$K)
@@ -145,7 +140,6 @@ StatSNMoE <- function(modelSNMoE) {
   log_lik <- -Inf
   com_loglik <- -Inf
   stored_loglik <- list()
-  stored_com_loglik <- list()
   BIC <- -Inf
   ICL <- -Inf
   AIC <- -Inf
@@ -155,8 +149,6 @@ StatSNMoE <- function(modelSNMoE) {
   tik <- matrix(0, modelSNMoE$n, modelSNMoE$K)
   E1ik <- matrix(0, modelSNMoE$m * modelSNMoE$n, modelSNMoE$K)
   E2ik <- matrix(0, modelSNMoE$m * modelSNMoE$n, modelSNMoE$K)
-  polynomials <- matrix(NA, modelSNMoE$n, modelSNMoE$K)
-  weighted_polynomials <- matrix(NA, modelSNMoE$n, modelSNMoE$K)
 
   new(
     "StatSNMoE",
@@ -170,7 +162,6 @@ StatSNMoE <- function(modelSNMoE) {
     log_lik = log_lik,
     com_loglik = com_loglik,
     stored_loglik = stored_loglik,
-    stored_com_loglik = stored_com_loglik,
     BIC = BIC,
     ICL = ICL,
     AIC = AIC,
@@ -179,8 +170,6 @@ StatSNMoE <- function(modelSNMoE) {
     log_sum_piik_fik = log_sum_piik_fik,
     tik = tik,
     E1ik = E1ik,
-    E2ik = E2ik,
-    polynomials = polynomials,
-    weighted_polynomials = weighted_polynomials
+    E2ik = E2ik
   )
 }

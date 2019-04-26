@@ -72,6 +72,7 @@ ParamSNMoE <- setRefClass(
 
       res_irls <- IRLS(tauijk = statSNMoE$tik, phiW = phiAlpha$XBeta, Wg_init = alpha, verbose_IRLS = verbose_IRLS)
       statSNMoE$piik <- res_irls$piik
+      reg_irls <- res_irls$reg_irls
 
       alpha <<- res_irls$W
 
@@ -96,7 +97,7 @@ ParamSNMoE <- setRefClass(
 
       }
 
-      return(res_irls$reg_irls)
+      return(reg_irls)
     }
   )
 )
