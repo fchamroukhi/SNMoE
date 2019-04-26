@@ -4,8 +4,8 @@ source("R/StatSNMoE.R")
 source("R/FittedSNMoE.R")
 
 EM <- function(modelSNMoE, n_tries = 1, max_iter = 1500, threshold = 1e-6, verbose = FALSE, verbose_IRLS = FALSE) {
-    phiAlpha <- designmatrix(x = modelSNMoE$X, p = modelSNMoE$p)
-    phiBeta <- designmatrix(x = modelSNMoE$X, p = modelSNMoE$q)
+    phiBeta <- designmatrix(x = modelSNMoE$X, p = modelSNMoE$p)
+    phiAlpha <- designmatrix(x = modelSNMoE$X, p = modelSNMoE$q)
 
     top <- 0
     try_EM <- 0
@@ -32,24 +32,9 @@ EM <- function(modelSNMoE, n_tries = 1, max_iter = 1500, threshold = 1e-6, verbo
       while (!converge && (iter <= max_iter)) {
         stat$EStep(modelSNMoE, param, phiBeta, phiAlpha)
 
-
-
-
-
-
-
         reg_irls <- param$MStep(modelSNMoE, stat, phiAlpha, phiBeta, verbose_IRLS)
 
-
-
-
-
-        stat$log_lik <- sum(stat$log_sum_piik_fik) + reg_irls
-
-
-
-
-        # stat$computeLikelihood(reg_irls)
+        stat$computeLikelihood(reg_irls)
         # FIN EM
 
         iter <- iter + 1
@@ -72,13 +57,6 @@ EM <- function(modelSNMoE, n_tries = 1, max_iter = 1500, threshold = 1e-6, verbo
         prev_loglik <- stat$log_lik
         stat$stored_loglik[iter] <- stat$log_lik
       }# FIN EM LOOP
-
-
-
-
-
-
-
 
 
       cpu_time_all[try_EM] <- Sys.time() - time

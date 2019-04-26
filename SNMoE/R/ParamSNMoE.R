@@ -91,12 +91,12 @@ ParamSNMoE <- setRefClass(
           - dlt * sum(statSNMoE$tik[, k] * (statSNMoE$E2ik[, k] + (modelSNMoE$Y - phiBeta$XBeta %*% beta[, k]) ^ 2))
         }, c(-1, 1))$root
 
+
         lambda[k] <<- delta[k] / sqrt(1 - delta[k] ^ 2)
 
-
-        return(res_irls$reg_irls)
       }
 
+      return(res_irls$reg_irls)
     }
   )
 )
