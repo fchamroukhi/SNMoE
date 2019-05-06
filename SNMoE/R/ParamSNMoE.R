@@ -84,7 +84,7 @@ ParamSNMoE <- setRefClass(
 
         # update the variances sigma2k
 
-        sigma[k] <<- sum(statSNMoE$tik[, k] * ((modelSNMoE$Y - phiBeta$XBeta %*% beta[, k]) ^2 - 2 * delta[k] * statSNMoE$E1ik[, k] * (modelSNMoE$Y - phiBeta$XBeta %*% beta[, k]) + statSNMoE$E2ik[, k])) / (2 * (1 - delta[k] ^ 2) * sum(statSNMoE$tik[, k]))
+        sigma[k] <<- sum(statSNMoE$tik[, k] * ((modelSNMoE$Y - phiBeta$XBeta %*% beta[, k]) ^ 2 - 2 * delta[k] * statSNMoE$E1ik[, k] * (modelSNMoE$Y - phiBeta$XBeta %*% beta[, k]) + statSNMoE$E2ik[, k])) / (2 * (1 - delta[k] ^ 2) * sum(statSNMoE$tik[, k]))
 
         # update the deltak (the skewness parameter)
         delta[k] <<- uniroot(f <- function(dlt) {
