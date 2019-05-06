@@ -8,6 +8,9 @@ FittedSNMoE <- setRefClass(
   methods = list(
     plot = function() {
 
+      oldpar <- par()[c("mfrow", "mai", "mgp")]
+      on.exit(par(oldpar), add = TRUE)
+
       plot.default(modelSNMoE$X, modelSNMoE$Y, ylab = "y", xlab = "x", cex = 0.7, pch = 3)
       title(main = "Estimated mean and experts")
       for (k in 1:modelSNMoE$K) {
