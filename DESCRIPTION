@@ -7,4 +7,26 @@ Maintainer: The package maintainer <yourself@somewhere.net>
 Description: More about what it does (maybe more than one line)
     Use four spaces when indenting paragraphs within the Description.
 License: What license is it under?
+Encoding: UTF-8
 LazyData: true
+Collate:
+    SNMoE-package.R
+    RcppExports.R
+    utils.R
+    FData.R
+    ModelSNMoE.R
+    ParamSNMoE.R
+    StatSNMoE.R
+    FittedSNMoE.R
+    ModelLearner.R
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 6.1.1
+LinkingTo: 
+    Rcpp,
+    RcppArmadillo
+Imports: 
+    Rcpp
+Suggests: 
+    knitr,
+    rmarkdown
+VignetteBuilder: knitr

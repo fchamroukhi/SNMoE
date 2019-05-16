@@ -1,6 +1,3 @@
-source("R/utils.R")
-source("R/IRLS.R")
-
 ParamSNMoE <- setRefClass(
   "ParamSNMoE",
   fields = list(
@@ -12,7 +9,7 @@ ParamSNMoE <- setRefClass(
   ),
   methods = list(
     initParam = function(modelSNMoE, phiAlpha, phiBeta, try_EM, segmental = FALSE) {
-      alpha <<- matrix(runif((modelSNMoE$q + 1) * (modelSNMoE$K - 1)), nrow = modelSNMoE$q + 1, ncol = modelSNMoE$K - 1) #initialisation aléatoire du vercteur param�tre du IRLS
+      alpha <<- matrix(runif((modelSNMoE$q + 1) * (modelSNMoE$K - 1)), nrow = modelSNMoE$q + 1, ncol = modelSNMoE$K - 1) #initialisation al??atoire du vercteur param???tre du IRLS
 
       #Initialise the regression parameters (coeffecients and variances):
       if (segmental == FALSE) {
@@ -69,8 +66,7 @@ ParamSNMoE <- setRefClass(
 
     MStep = function(modelSNMoE, statSNMoE, phiAlpha, phiBeta, verbose_IRLS) {
       # M-Step
-
-      res_irls <- IRLS(tauijk = statSNMoE$tik, phiW = phiAlpha$XBeta, Wg_init = alpha, verbose_IRLS = verbose_IRLS)
+      res_irls <- IRLS(phiAlpha$XBeta, statSNMoE$tik, ones(nrow(statSNMoE$tik), 1), alpha, verbose_IRLS)
       statSNMoE$piik <- res_irls$piik
       reg_irls <- res_irls$reg_irls
 

@@ -1,5 +1,3 @@
-source("R/FData.R")
-
 ModelSNMoE <- setRefClass(
   "ModelSNMoE",
   contains = "FData",

@@ -1,8 +1,3 @@
-source("R/utils.R")
-source("R/ParamSNMoE.R")
-source("R/StatSNMoE.R")
-source("R/FittedSNMoE.R")
-
 EM <- function(modelSNMoE, n_tries = 1, max_iter = 1500, threshold = 1e-6, verbose = FALSE, verbose_IRLS = FALSE) {
     phiBeta <- designmatrix(x = modelSNMoE$X, p = modelSNMoE$p)
     phiAlpha <- designmatrix(x = modelSNMoE$X, p = modelSNMoE$q)
