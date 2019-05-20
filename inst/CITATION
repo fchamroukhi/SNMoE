@@ -1,0 +1,41 @@
+citHeader("To cite SNMoE in publications use:")
+
+citEntry(
+  entry    = "InProceedings",
+  title    = "Skew-Normal Mixture of Experts",
+  author = personList(person(given="F.", family="Chamroukhi")),
+  booktitle  = "The International Joint Conference on Neural Networks (IJCNN)",
+  year     = "2016",
+  url      = "https://chamroukhi.com/papers/Chamroukhi-SNMoE-IJCNN2016.pdf",
+  textVersion = "Chamroukhi F (2016). \u201cSkew-Normal Mixture of Experts.\u201d In _The International
+  Joint Conference on Neural Networks (IJCNN)_.
+  <URL:https://chamroukhi.com/papers/Chamroukhi-SNMoE-IJCNN2016.pdf>."
+)
+
+citEntry(
+  entry    = "Misc",
+  title    = "Non-Normal Mixtures of Experts",
+  author = personList(person(given="F.", family="Chamroukhi")),
+  year     = "2015",
+  url      = "http://arxiv.org/pdf/1506.06707.pdf",
+  textVersion = "Chamroukhi F (2015). \u201cNon-Normal Mixtures of Experts.\u201d
+                <URL: http://arxiv.org/pdf/1506.06707.pdf>."
+)
+
+citEntry(
+  entry    = "Article",
+  title    = "Practical and theoretical aspects of mixture-of-experts modeling: An overview",
+  author = personList(person(given="Hien D.", family="Nguyen"),
+                      person(given="F.", family="Chamroukhi")),
+  journal  = "Wiley Interdisciplinary Reviews: Data Mining and Knowledge Discovery",
+  publisher = "Wiley Periodicals, Inc",
+  year     = "2018",
+  pages = "e1246--n/a",
+  doi = "https://doi.org/10.1002/widm.1246",
+  url      = "https://chamroukhi.com/papers/Nguyen-Chamroukhi-MoE-DMKD-2018",
+  textVersion = "Nguyen H and Chamroukhi F (2018). \u201cPractical and theoretical aspects
+  of mixture-of-experts modeling: An overview.\u201d _Wiley Interdisciplinary Reviews:
+  Data Mining and Knowledge Discovery_, pp. e1246-n/a.
+  doi: https://doi.org/10.1002/widm.1246 (URL:http://doi.org/https://doi.org/10.1002/widm.1246),
+  <URL: https://chamroukhi.com/papers/Nguyen-Chamroukhi-MoE-DMKD-2018>."
+)
