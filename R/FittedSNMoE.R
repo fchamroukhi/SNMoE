@@ -41,7 +41,7 @@ FittedSNMoE <- setRefClass(
       }
       for (k in 1:modelSNMoE$K) {
         index <- statSNMoE$klas == k
-        points(modelSNMoE$X[, index], modelSNMoE$Y[index, ], col = colorsvec[k], cex = 0.7, pch = 3)
+        points(modelSNMoE$X[index], modelSNMoE$Y[index, ], col = colorsvec[k], cex = 0.7, pch = 3)
       }
 
       # Observed data log-likelihood
