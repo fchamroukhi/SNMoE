@@ -89,7 +89,7 @@ StatSNMoE <- setRefClass(
       cpu_time <<- mean(cpu_time_all)
 
       # E[yi|zi=k]
-      Ey_k <<- phiBeta$XBeta[1:paramSNMoE$fData$n, ] %*% paramSNMoE$beta + ones(paramSNMoE$fData$n, 1) %*% (sqrt(2 / pi) * paramSNMoE$delta * paramSNMoE$sigma)
+      Ey_k <<- paramSNMoE$phiBeta$XBeta[1:paramSNMoE$fData$n, ] %*% paramSNMoE$beta + ones(paramSNMoE$fData$n, 1) %*% (sqrt(2 / pi) * paramSNMoE$delta * paramSNMoE$sigma)
 
       # E[yi]
       Ey <<- matrix(apply(piik * Ey_k, 1, sum))
