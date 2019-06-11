@@ -14,10 +14,9 @@ Collate:
     RcppExports.R
     utils.R
     FData.R
-    ModelSNMoE.R
     ParamSNMoE.R
     StatSNMoE.R
-    FittedSNMoE.R
+    ModelSNMoE.R
     ModelLearner.R
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 6.1.1

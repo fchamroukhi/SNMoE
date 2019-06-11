@@ -1,3 +1,4 @@
+#' @export
 StatSNMoE <- setRefClass(
   "StatSNMoE",
   fields = list(
@@ -23,6 +24,28 @@ StatSNMoE <- setRefClass(
     E2ik = "matrix"
   ),
   methods = list(
+    initialize = function(paramSNMoE = ParamSNMoE(fData = FData(numeric(1), matrix(1)), K = 1, p = 2, q = 1)) {
+      piik <<- matrix(NA, paramSNMoE$fData$n, paramSNMoE$K)
+      z_ik <<- matrix(NA, paramSNMoE$fData$n, paramSNMoE$K)
+      klas <<- matrix(NA, paramSNMoE$fData$n, 1)
+      Ey_k <<- matrix(NA, paramSNMoE$fData$n, paramSNMoE$K)
+      Ey <<- matrix(NA, paramSNMoE$fData$n, 1)
+      Var_yk <<- matrix(NA, 1, paramSNMoE$K)
+      Vary <<- matrix(NA, paramSNMoE$fData$n, 1)
+      log_lik <<- -Inf
+      com_loglik <<- -Inf
+      stored_loglik <<- list()
+      BIC <<- -Inf
+      ICL <<- -Inf
+      AIC <<- -Inf
+      cpu_time <<- Inf
+      log_piik_fik <<- matrix(0, paramSNMoE$fData$n, paramSNMoE$K)
+      log_sum_piik_fik <<- matrix(NA, paramSNMoE$fData$n, 1)
+      tik <<- matrix(0, paramSNMoE$fData$n, paramSNMoE$K)
+      E1ik <<- matrix(0, paramSNMoE$fData$m * paramSNMoE$fData$n, paramSNMoE$K)
+      E2ik <<- matrix(0, paramSNMoE$fData$m * paramSNMoE$fData$n, paramSNMoE$K)
+    },
+
     MAP = function() {
       "
       calcule une partition d'un echantillon par la regle du Maximum A Posteriori ?? partir des probabilites a posteriori
@@ -62,11 +85,11 @@ StatSNMoE <- setRefClass(
     #######
     # compute the final solution stats
     #######
-    computeStats = function(modelSNMoE, paramSNMoE, phiBeta, phiAlpha, cpu_time_all) {
+    computeStats = function(paramSNMoE, cpu_time_all) {
       cpu_time <<- mean(cpu_time_all)
 
       # E[yi|zi=k]
-      Ey_k <<- phiBeta$XBeta[1:modelSNMoE$n, ] %*% paramSNMoE$beta + ones(modelSNMoE$n, 1) %*% (sqrt(2 / pi) * paramSNMoE$delta * paramSNMoE$sigma)
+      Ey_k <<- phiBeta$XBeta[1:paramSNMoE$fData$n, ] %*% paramSNMoE$beta + ones(paramSNMoE$fData$n, 1) %*% (sqrt(2 / pi) * paramSNMoE$delta * paramSNMoE$sigma)
 
       # E[yi]
       Ey <<- matrix(apply(piik * Ey_k, 1, sum))
@@ -75,38 +98,38 @@ StatSNMoE <- setRefClass(
       Var_yk <<- (1 - (2 / pi) * (paramSNMoE$delta ^ 2)) * (paramSNMoE$sigma ^ 2)
 
       # Var[yi]
-      Vary <<- apply(piik * (Ey_k ^ 2 + ones(modelSNMoE$n, 1) %*% Var_yk), 1, sum) - Ey ^ 2
+      Vary <<- apply(piik * (Ey_k ^ 2 + ones(paramSNMoE$fData$n, 1) %*% Var_yk), 1, sum) - Ey ^ 2
 
 
       ### BIC AIC et ICL
 
-      BIC <<- log_lik - (modelSNMoE$nu * log(modelSNMoE$n * modelSNMoE$m) / 2)
-      AIC <<- log_lik - modelSNMoE$nu
+      BIC <<- log_lik - (paramSNMoE$nu * log(paramSNMoE$fData$n * paramSNMoE$fData$m) / 2)
+      AIC <<- log_lik - paramSNMoE$nu
       ## CL(theta) : complete-data loglikelihood
-      zik_log_piik_fk <- (repmat(z_ik, modelSNMoE$m, 1)) * log_piik_fik
+      zik_log_piik_fk <- (repmat(z_ik, paramSNMoE$fData$m, 1)) * log_piik_fik
       sum_zik_log_fik <- apply(zik_log_piik_fk, 1, sum)
       com_loglik <<- sum(sum_zik_log_fik)
 
-      ICL <<- com_loglik - (modelSNMoE$nu * log(modelSNMoE$n * modelSNMoE$m) / 2)
+      ICL <<- com_loglik - (paramSNMoE$nu * log(paramSNMoE$fData$n * paramSNMoE$fData$m) / 2)
       # solution.XBeta = XBeta(1:m,:);
       # solution.XAlpha = XAlpha(1:m,:);
     },
     #######
     # EStep
     #######
-    EStep = function(modelSNMoE, paramSNMoE, phiBeta, phiAlpha) {
-      piik <<- multinomialLogit(paramSNMoE$alpha, phiAlpha$XBeta, ones(modelSNMoE$n, modelSNMoE$K), ones(modelSNMoE$n, 1))$piik
+    EStep = function(paramSNMoE) {
+      piik <<- multinomialLogit(paramSNMoE$alpha, paramSNMoE$phiAlpha$XBeta, ones(paramSNMoE$fData$n, paramSNMoE$K), ones(paramSNMoE$fData$n, 1))$piik
 
-      piik_fik <- zeros(modelSNMoE$m * modelSNMoE$n, modelSNMoE$K)
+      piik_fik <- zeros(paramSNMoE$fData$m * paramSNMoE$fData$n, paramSNMoE$K)
 
-      for (k in (1:modelSNMoE$K)) {
-        muk <- phiBeta$XBeta %*% paramSNMoE$beta[, k]
+      for (k in (1:paramSNMoE$K)) {
+        muk <- paramSNMoE$phiBeta$XBeta %*% paramSNMoE$beta[, k]
 
         sigma2k <- paramSNMoE$sigma[k]
         sigmak <- sqrt(sigma2k)
-        dik <- (modelSNMoE$Y - muk) / sigmak
+        dik <- (paramSNMoE$fData$Y - muk) / sigmak
 
-        mu_uk <- (paramSNMoE$delta[k] * abs(modelSNMoE$Y - muk))
+        mu_uk <- (paramSNMoE$delta[k] * abs(paramSNMoE$fData$Y - muk))
         sigma2_uk <- (1 - paramSNMoE$delta[k] ^ 2) * paramSNMoE$sigma[k]
         sigma_uk <- sqrt(sigma2_uk)
 
@@ -121,53 +144,7 @@ StatSNMoE <- setRefClass(
 
       log_sum_piik_fik <<- matrix(log(rowSums(piik_fik)))
 
-      tik <<- piik_fik / (rowSums(piik_fik) %*% ones(1, modelSNMoE$K))
+      tik <<- piik_fik / (rowSums(piik_fik) %*% ones(1, paramSNMoE$K))
     }
   )
 )
-
-
-StatSNMoE <- function(modelSNMoE) {
-  piik <- matrix(NA, modelSNMoE$n, modelSNMoE$K)
-  z_ik <- matrix(NA, modelSNMoE$n, modelSNMoE$K)
-  klas <- matrix(NA, modelSNMoE$n, 1)
-  Ey_k <- matrix(NA, modelSNMoE$n, modelSNMoE$K)
-  Ey <- matrix(NA, modelSNMoE$n, 1)
-  Var_yk <- matrix(NA, 1, modelSNMoE$K)
-  Vary <- matrix(NA, modelSNMoE$n, 1)
-  log_lik <- -Inf
-  com_loglik <- -Inf
-  stored_loglik <- list()
-  BIC <- -Inf
-  ICL <- -Inf
-  AIC <- -Inf
-  cpu_time <- Inf
-  log_piik_fik <- matrix(0, modelSNMoE$n, modelSNMoE$K)
-  log_sum_piik_fik <- matrix(NA, modelSNMoE$n, 1)
-  tik <- matrix(0, modelSNMoE$n, modelSNMoE$K)
-  E1ik <- matrix(0, modelSNMoE$m * modelSNMoE$n, modelSNMoE$K)
-  E2ik <- matrix(0, modelSNMoE$m * modelSNMoE$n, modelSNMoE$K)
-
-  new(
-    "StatSNMoE",
-    piik = piik,
-    z_ik = z_ik,
-    klas = klas,
-    Ey_k = Ey_k,
-    Ey = Ey,
-    Var_yk = Var_yk,
-    Vary = Vary,
-    log_lik = log_lik,
-    com_loglik = com_loglik,
-    stored_loglik = stored_loglik,
-    BIC = BIC,
-    ICL = ICL,
-    AIC = AIC,
-    cpu_time = cpu_time,
-    log_piik_fik = log_piik_fik,
-    log_sum_piik_fik = log_sum_piik_fik,
-    tik = tik,
-    E1ik = E1ik,
-    E2ik = E2ik
-  )
-}
