@@ -9,13 +9,12 @@ citEntry(
   publisher = "Wiley Periodicals, Inc",
   year     = "2018",
   pages = "e1246--n/a",
-  doi = "https://doi.org/10.1002/widm.1246",
+  doi = "10.1002/widm.1246",
   url      = "https://chamroukhi.com/papers/Nguyen-Chamroukhi-MoE-DMKD-2018",
   textVersion = "Nguyen H and Chamroukhi F (2018). \u201cPractical and theoretical aspects
   of mixture-of-experts modeling: An overview.\u201d Wiley Interdisciplinary Reviews:
   Data Mining and Knowledge Discovery, pp. e1246-n/a.
-  doi: https://doi.org/10.1002/widm.1246
-  (URL:http://doi.org/https://doi.org/10.1002/widm.1246),
+  doi: 10.1002/widm.1246 (URL:https://doi.org/10.1002/widm.1246),
   <URL: https://chamroukhi.com/papers/Nguyen-Chamroukhi-MoE-DMKD-2018>."
 )
 
