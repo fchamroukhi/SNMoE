@@ -1,14 +1,25 @@
-Package: SNMoE
 Type: Package
-Title: What the Package Does (Title Case)
+Package: SNMoE
+Title: Skew-Normal Mixture-of-Experts for Clustering Heterogeneous Non-Normal Data
 Version: 0.1.0
-Author: Who wrote it
-Maintainer: The package maintainer <yourself@somewhere.net>
-Description: More about what it does (maybe more than one line)
-    Use four spaces when indenting paragraphs within the Description.
-License: What license is it under?
-Encoding: UTF-8
-LazyData: true
+Authors@R: c(person("Faicel", "Chamroukhi", role = c("aut"),
+    email = "faicel.chamroukhi@unicaen.fr",
+    comment = c(ORCID = "0000-0002-5894-3103")),
+    person("Marius", "Bartcus", role = c("aut")),
+    person("Florian", "Lecocq", role = c("aut", "cre"),
+    email = "florian.lecocq@outlook.com"))
+Description: Modeling, density estimation, and model-based clustering of heterogeneous 
+    regression data with possibly skewed distributions by using skew-normal mixture of 
+    experts fitted by the EM algorithm. See also the packages 'tMoE' and 'StMoE'.
+License: GPL (>= 3)
+Imports: 
+    Rcpp
+Suggests: 
+    knitr,
+    rmarkdown
+LinkingTo: 
+    Rcpp,
+    RcppArmadillo
 Collate:
     SNMoE-package.R
     RcppExports.R
@@ -18,14 +29,8 @@ Collate:
     StatSNMoE.R
     ModelSNMoE.R
     ModelLearner.R
+VignetteBuilder: knitr
+Encoding: UTF-8
+LazyData: true
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 6.1.1
-LinkingTo: 
-    Rcpp,
-    RcppArmadillo
-Imports: 
-    Rcpp
-Suggests: 
-    knitr,
-    rmarkdown
-VignetteBuilder: knitr
