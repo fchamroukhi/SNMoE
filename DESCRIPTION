@@ -12,7 +12,11 @@ Description: Modeling, density estimation, and model-based clustering of heterog
     regression data with possibly skewed distributions by using skew-normal mixture of 
     experts fitted by the EM algorithm. See also the packages 'tMoE' and 'StMoE'.
 License: GPL (>= 3)
+Depends: 
+    R (>= 2.10)
 Imports: 
+    methods,
+    stats,
     Rcpp
 Suggests: 
     knitr,
