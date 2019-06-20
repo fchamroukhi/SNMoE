@@ -39,7 +39,7 @@ ParamSNMoE <- setRefClass(
     delta = "matrix"
   ),
   methods = list(
-    initialize = function(fData = FData(numeric(1), matrix(1)), K = 1, p = 2, q = 1) {
+    initialize = function(fData = FData(numeric(1), matrix(1)), K = 1, p = 3, q = 1) {
 
       fData <<- fData
 

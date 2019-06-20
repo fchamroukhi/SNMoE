@@ -61,13 +61,13 @@ verbose_IRLS <- FALSE
 # Estimation
 
 ```{r}
-solution <- emSNMoE(simulatedstructureddata$X, matrix(simulatedstructureddata$Y), K, p, q, 
-               n_tries, max_iter, threshold, verbose, verbose_IRLS)
+snmoe <- emSNMoE(simulatedstructureddata$X, matrix(simulatedstructureddata$Y), 
+                    K, p, q, n_tries, max_iter, threshold, verbose, verbose_IRLS)
 ```
 
 
 # Plots
 
 ```{r}
-solution$plot()
+snmoe$plot()
 ```
