@@ -31,7 +31,7 @@ library(SNMoE)
 
 # Introduction
 
-**SNMoE** is a contributed R package for segmentation. It provides functions for parameter estimation via the EM algorithm. This document gives a quick tour of **SNMoE** (version `r packageVersion("SNMoE")`) functionalities. It was written in R Markdown, using the [knitr](https://cran.r-project.org/package=knitr) package for production. 
+**SNMoE** is a R package for segmentation. It provides functions for parameter estimation via the EM algorithm. This document gives a quick tour of **SNMoE** (version `r packageVersion("SNMoE")`) functionalities. It was written in R Markdown, using the [knitr](https://cran.r-project.org/package=knitr) package for production. 
 See `help(package="SNMoE")` for further details and references provided by `citation("SNMoE")`.
 
 # Load data
@@ -68,6 +68,26 @@ snmoe <- emSNMoE(simulatedstructureddata$X, matrix(simulatedstructureddata$Y),
 
 # Plots
 
+## Mean curve
+
 ```{r}
-snmoe$plot()
+snmoe$plot(what = "meancurve")
+```
+
+## Confidence regions
+
+```{r}
+snmoe$plot(what = "confregions")
+```
+
+## Clusters
+
+```{r}
+snmoe$plot(what = "clusters")
+```
+
+## Log-likelihood
+
+```{r}
+snmoe$plot(what = "loglikelihood")
 ```
