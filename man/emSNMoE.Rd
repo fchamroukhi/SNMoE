@@ -4,7 +4,7 @@
 \alias{emSNMoE}
 \title{emSNMoE is used to fit a SNMoE model.}
 \usage{
-emSNMoE(X, Y, K, p, q = 1, n_tries = 1, max_iter = 1500,
+emSNMoE(X, Y, K, p = 3, q = 1, n_tries = 1, max_iter = 1500,
   threshold = 1e-06, verbose = FALSE, verbose_IRLS = FALSE)
 }
 \arguments{
