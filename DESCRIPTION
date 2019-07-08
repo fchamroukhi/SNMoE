@@ -33,7 +33,7 @@ Collate:
     ParamSNMoE.R
     StatSNMoE.R
     ModelSNMoE.R
-    ModelLearner.R
+    emSNMoE.R
 VignetteBuilder: knitr
 Encoding: UTF-8
 LazyData: true

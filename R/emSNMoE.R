@@ -119,5 +119,5 @@ emSNMoE <- function(X, Y, K, p = 3, q = 1, n_tries = 1, max_iter = 1500, thresho
     # FINISH computation of statSolution
     statSolution$computeStats(paramSolution, cpu_time_all)
 
-    return(ModelSNMoE(paramSNMoE = paramSolution, statSNMoE = statSolution))
+    return(ModelSNMoE(param = paramSolution, stat = statSolution))
   }
