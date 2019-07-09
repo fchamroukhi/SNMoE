@@ -52,8 +52,6 @@ degree of freedom of the SNMoE model.}
 \item{\code{AIC}}{Numeric. Value of the AIC (Akaike Information Criterion)
 criterion. The formula is \eqn{AIC = log\_lik - nu}{AIC = log\_lik - nu}.}
 
-\item{\code{cpu_time}}{Numeric. Average executon time of a EM step.}
-
 \item{\code{log_piik_fik}}{Matrix of size \eqn{(n, K)} giving the values of the
 logarithm of the joint probability
 \eqn{P(Y_{i}, \ zi = k)}{P(Yi, zi = k)}, \eqn{i = 1,\dots,n}.}
@@ -65,6 +63,10 @@ P(Yi, zi = k)}, \eqn{i = 1,\dots,n}.}
 \item{\code{tik}}{Matrix of size \eqn{(n, K)} giving the posterior probability that
 \eqn{Y_{i}}{Yi} originates from the \eqn{k}-th regression model
 \eqn{P(zi = k | Y, W, \beta)}.}
+
+\item{\code{E1ik}}{To define.}
+
+\item{\code{E2ik}}{To define.}
 }}
 
 \section{Methods}{

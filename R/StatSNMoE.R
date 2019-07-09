@@ -30,8 +30,6 @@
 #' degree of freedom of the SNMoE model.
 #' @field AIC Numeric. Value of the AIC (Akaike Information Criterion)
 #' criterion. The formula is \eqn{AIC = log\_lik - nu}{AIC = log\_lik - nu}.
-#' @field cpu_time Numeric. Average executon time of a EM step.
-#'
 #' @field log_piik_fik Matrix of size \eqn{(n, K)} giving the values of the
 #' logarithm of the joint probability
 #' \eqn{P(Y_{i}, \ zi = k)}{P(Yi, zi = k)}, \eqn{i = 1,\dots,n}.
@@ -41,8 +39,8 @@
 #' @field tik Matrix of size \eqn{(n, K)} giving the posterior probability that
 #' \eqn{Y_{i}}{Yi} originates from the \eqn{k}-th regression model
 #' \eqn{P(zi = k | Y, W, \beta)}.
-#' @field E1ik
-#' @field E2ik
+#' @field E1ik To define.
+#' @field E2ik To define.
 #' @seealso [ParamSNMoE], [FData]
 #' @export
 StatSNMoE <- setRefClass(
@@ -62,7 +60,6 @@ StatSNMoE <- setRefClass(
     BIC = "numeric",
     ICL = "numeric",
     AIC = "numeric",
-    cpu_time = "numeric",
     log_piik_fik = "matrix",
     log_sum_piik_fik = "matrix",
     tik = "matrix",
@@ -84,7 +81,6 @@ StatSNMoE <- setRefClass(
       BIC <<- -Inf
       ICL <<- -Inf
       AIC <<- -Inf
-      cpu_time <<- Inf
       log_piik_fik <<- matrix(0, paramSNMoE$fData$n, paramSNMoE$K)
       log_sum_piik_fik <<- matrix(NA, paramSNMoE$fData$n, 1)
       tik <<- matrix(0, paramSNMoE$fData$n, paramSNMoE$K)
@@ -131,8 +127,7 @@ StatSNMoE <- setRefClass(
     #######
     # compute the final solution stats
     #######
-    computeStats = function(paramSNMoE, cpu_time_all) {
-      cpu_time <<- mean(cpu_time_all)
+    computeStats = function(paramSNMoE) {
 
       # E[yi|zi=k]
       Ey_k <<- paramSNMoE$phiBeta$XBeta[1:paramSNMoE$fData$n, ] %*% paramSNMoE$beta + ones(paramSNMoE$fData$n, 1) %*% (sqrt(2 / pi) * paramSNMoE$delta * paramSNMoE$sigma)
