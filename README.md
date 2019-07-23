@@ -5,13 +5,13 @@
 
 <!-- badges: end -->
 
-## Overview
+# Overview
 
 User-friendly and flexible algorithm for modeling, sampling, inference,
 and clustering heteregenous data with the Skew-Normal Mixture-of-Experts
 (SNMoE) model.
 
-## Installation
+# Installation
 
 You can install the development version of STMoE from
 [GitHub](https://github.com/) with:
@@ -37,11 +37,14 @@ Use the following command to display vignettes:
 browseVignettes("SNMoE")
 ```
 
-## Usage
+# Usage
 
 ``` r
 library(SNMoE)
+```
 
+``` r
+# Application to a toy data set
 data("simulatedstructureddata")
 
 K <- 2 # Number of regimes (mixture components)
@@ -60,4 +63,4 @@ snmoe <- emSNMoE(simulatedstructureddata$X, matrix(simulatedstructureddata$Y),
 snmoe$plot()
 ```
 
-<img src="man/figures/README-unnamed-chunk-5-1.png" style="display: block; margin: auto;" /><img src="man/figures/README-unnamed-chunk-5-2.png" style="display: block; margin: auto;" /><img src="man/figures/README-unnamed-chunk-5-3.png" style="display: block; margin: auto;" /><img src="man/figures/README-unnamed-chunk-5-4.png" style="display: block; margin: auto;" />
+<img src="man/figures/README-unnamed-chunk-6-1.png" style="display: block; margin: auto;" /><img src="man/figures/README-unnamed-chunk-6-2.png" style="display: block; margin: auto;" /><img src="man/figures/README-unnamed-chunk-6-3.png" style="display: block; margin: auto;" /><img src="man/figures/README-unnamed-chunk-6-4.png" style="display: block; margin: auto;" />
