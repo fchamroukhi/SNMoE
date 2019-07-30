@@ -31,6 +31,7 @@ Collate:
     SNMoE-package.R
     RcppExports.R
     utils.R
+    sampleUnivSNMoE.R
     FData.R
     ParamSNMoE.R
     StatSNMoE.R
