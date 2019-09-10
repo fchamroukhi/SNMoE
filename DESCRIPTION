@@ -32,7 +32,6 @@ Collate:
     RcppExports.R
     utils.R
     sampleUnivSNMoE.R
-    FData.R
     ParamSNMoE.R
     StatSNMoE.R
     ModelSNMoE.R
