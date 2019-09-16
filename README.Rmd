@@ -18,9 +18,27 @@ knitr::opts_chunk$set(
 
 # Overview
 
-User-friendly and flexible algorithm for modeling, sampling, inference, and 
-clustering heteregenous data with the Skew-Normal Mixture-of-Experts (SNMoE) 
-model.
+**SNMoE** (Skew-Normal Mixtures-of-Experts) provides a flexible modelling 
+framework for heterogenous data with possibly skewed distributions to 
+generalize the standard Normal mixture of expert model. **SNMoE** consists of 
+a mixture of *K* skew-Normal expert regressors network (of degree *p*) gated by
+a softmax gating network (of degree *q*) and is represented by:
+
+* The gating network parameters `alpha`'s of the softmax net.
+* The experts network parameters: The location parameters (regression 
+coefficients) `beta`'s, scale parameters `sigma`'s, and the skewness 
+parameters `lambda`'s. **SNMoE** thus generalises mixtures of (normal, 
+skew-normal) distributions and mixtures of regressions with these 
+distributions. For example, when $q=0$, we retrieve mixtures of (skew-normal, 
+or normal) regressions, and when both $p=0$ and $q=0$, it is a mixture of 
+(skew-normal, or normal) distributions. It also reduces to the standard 
+(normal, skew-normal) distribution when we only use a single expert ($K=1$).
+
+Model estimation/learning is performed by a dedicated expectation conditional 
+maximization (ECM) algorithm by maximizing the observed data log-likelihood. 
+We provide simulated examples to illustrate the use of the model in 
+model-based clustering of heterogeneous regression data and in fitting 
+non-linear regression functions.
 
 # Installation
 
@@ -54,6 +72,8 @@ library(SNMoE)
 ```
 
 ```{r, echo = TRUE}
+# Application to a simulated data set
+
 n <- 500 # Size of the sample
 alphak <- matrix(c(0, 8), ncol = 1) # Parameters of the gating network
 betak <- matrix(c(0, -2.5, 0, 2.5), ncol = 2) # Regression coefficients of the experts
@@ -65,6 +85,29 @@ x <- seq.int(from = -1, to = 1, length.out = n) # Inputs (predictors)
 sample <- sampleUnivSNMoE(alphak = alphak, betak = betak, sigmak = sigmak, 
                           lambdak = lambdak, x = x)
 y <- sample$y
+
+K <- 2 # Number of regressors/experts
+p <- 1 # Order of the polynomial regression (regressors/experts)
+q <- 1 # Order of the logistic regression (gating network)
+
+n_tries <- 1
+max_iter <- 1500
+threshold <- 1e-6
+verbose <- TRUE
+verbose_IRLS <- FALSE
+
+snmoe <- emSNMoE(X = x, Y = y, K, p, q, n_tries, max_iter, 
+                 threshold, verbose, verbose_IRLS)
+
+snmoe$plot()
+```
+
+```{r, echo = TRUE}
+# Application to a real data set
+
+data("tempanomalies")
+x <- tempanomalies$Year
+y <- tempanomalies$AnnualAnomaly
 
 K <- 2 # Number of regressors/experts
 p <- 1 # Order of the polynomial regression (regressors/experts)
