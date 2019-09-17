@@ -30,6 +30,7 @@ LinkingTo:
 Collate:
     SNMoE-package.R
     RcppExports.R
+    logsumexp.R
     utils.R
     sampleUnivSNMoE.R
     ParamSNMoE.R
