@@ -98,6 +98,11 @@ snmoe <- emSNMoE(X = x, Y = y, K, p, q, n_tries, max_iter,
                  threshold, verbose, verbose_IRLS)
 ```
 
+# Summary
+
+```{r}
+snmoe$summary()
+```
 
 # Plots
 
